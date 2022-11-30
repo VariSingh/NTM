@@ -26,6 +26,10 @@
 
 Task Management Backend created using [Nest](https://github.com/nestjs/nest).
 
+##CREDITS
+
+I have created this app while studying NESTJS from this [Udemy Course](https://www.udemy.com/course/nestjs-zero-to-hero/).
+
 ## Installation
 
 ```bash
