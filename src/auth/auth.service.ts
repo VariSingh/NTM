@@ -10,20 +10,25 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/signin.dto';
 import { SignUpDto } from './dto/signup.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JWTPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectRepository(User) private authRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private authRepo: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
 
-  signIn = async (signInDto: SignInDto): Promise<string> => {
+  signIn = async (signInDto: SignInDto): Promise<{ accessToken: string }> => {
     const { username, password } = signInDto;
     const user = await this.authRepo.findOne({
-      where: {
-        username: username,
-      },
+      where: { username },
     });
     if (user && (await bcrypt.compare(password, user.password))) {
-      return 'success';
+      const payload: JWTPayload = { username };
+      const accessToken = await this.jwtService.sign(payload);
+      return { accessToken };
     } else {
       throw new UnauthorizedException('Username or password is incorrect!');
     }
